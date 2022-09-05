@@ -1,0 +1,4 @@
+# Project exclude paths
+/demo/target/
+/demo2/target/
+/gate-gateway/target/

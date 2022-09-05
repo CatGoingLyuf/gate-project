@@ -1,0 +1,40 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: gateway
+  cloud:
+    consul:
+      enabled: true
+      host: 192.168.154.14
+      port: 8500
+      discovery:
+        heartbeat:
+          #是否启用服务发现
+          enabled: true
+        #配置健康检查路径
+        health-check-path: /health
+        #配置健康检查时间间隔
+        health-check-interval: 10s
+        #表示注册时使用ip而不是hostname
+        prefer-ip-address: true
+        tags: lyuf-test
+        health-check-critical-timeout: 5m
+    gateway:
+      routes: #网关路由配置
+        - id: demo-test #网关路由配置
+          # uri: http://127.0.0.1:8081 #路由的目标地址http是固定地址，写死。一般不去使用
+          uri: lb://demo-test #路由的目标地址，lb就是负载均衡，后面跟服务名称
+          predicates: # 路由断言，也就是判断请求是否符合路由规则的条件
+            - Path=/demo/** # 路径断言，这个是按照路径匹配，只要以/user/开头就符合要求
+          filters: #添加过滤器
+            - AddRequestHeader=token,aaaaaaaaa #AddRequestHeader就是其中一个过滤器名称，Truth是key,No.1是value
+        - id: demo2-test #网关路由配置
+          # uri: http://127.0.0.1:8081 #路由的目标地址http是固定地址，写死。一般不去使用
+          uri: lb://demo2-test #路由的目标地址，lb就是负载均衡，后面跟服务名称
+          predicates: # 路由断言，也就是判断请求是否符合路由规则的条件
+            - Path=/demoTo/** # 路径断言，这个是按照路径匹配，只要以/user/开头就符合要求
+          filters: #添加过滤器
+            - AddRequestHeader=token,bbbbbbbbb #AddRequestHeader就是其中一个过滤器名称，Truth是key,No.1是value
+#      default-filters: #对所有路由生效，与routes是同一级别
+#        - AddRequestHeader=Truth,No.1 #AddRequestHeader就是其中一个过滤器名称，Truth是key,No.1是value
